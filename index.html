@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>🔥 Steam Скидки</title>
 
+<style>
+body {
+    background: #0f172a;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+}
+
+h1 {
+    color: #38bdf8;
+}
+
+.game {
+    background: #1e293b;
+    margin: 15px auto;
+    padding: 15px;
+    border-radius: 10px;
+    width: 300px;
+    transition: 0.3s;
+}
+
+.game:hover {
+    transform: scale(1.05);
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔥 Топ скидок Steam</h1>
+<div id="games">Загрузка...</div>
+
+<script>
+async function loadGames() {
+    try {
+        let res = await fetch("https://corsproxy.io/?https://store.steampowered.com/api/featuredcategories");
+        let data = await res.json();
+
+        let html = "";
+
+        data.specials.items.slice(0, 8).forEach(game => {
+            html += `
+            <div class="game">
+                <h2>${game.name}</h2>
+                <img src="${game.header_image}" width="250"><br>
+                <p>Скидка: -${game.discount_percent}%</p>
+                <p>Цена: ${(game.final_price / 100).toFixed(2)} ₽</p>
+            </div>
+            `;
+        });
+
+        document.getElementById("games").innerHTML = html;
+
+    } catch (e) {
+        document.getElementById("games").innerHTML = "❌ Ошибка загрузки";
+        console.error(e);
+    }
+}
+
+loadGames();
+</script>
+
+</body>
+</html>
