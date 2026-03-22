@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<title>🔥 Топ знижок Steam</title>
+<title>🔥 Популярні знижки Steam</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
@@ -62,25 +62,40 @@ h1 {
 </head>
 <body>
 
-<h1>🔥 Топ знижок Steam</h1>
+<h1>🔥 Популярні знижки Steam</h1>
 <div id="games">Завантаження...</div>
 
 <script>
 const container = document.getElementById("games");
+
+// Список популярных игр (названия, чтобы фильтровать API)
+const popularGames = [
+    "Valheim",
+    "Grand Theft Auto V",
+    "Garry's Mod",
+    "Terraria",
+    "Cyberpunk 2077",
+    "The Witcher 3",
+    "Stardew Valley",
+    "Dark Souls III"
+];
 
 // Функция загрузки игр через CheapShark API
 async function loadGames() {
     container.innerHTML = "Завантаження...";
 
     try {
-        // Берем топ скидок через CheapShark API (регион UA, Steam)
+        // Берем топ скидок через CheapShark API (storeID=1 → Steam)
         const res = await fetch("https://www.cheapshark.com/api/1.0/deals?storeID=1&upperPrice=1000&sortBy=Savings");
         const data = await res.json();
 
         container.innerHTML = ""; // очищаем контейнер
 
-        // Берем первые 20 игр
-        data.slice(0, 20).forEach(game => {
+        // Фильтруем только популярные игры
+        const filtered = data.filter(game => popularGames.some(name => game.title.toLowerCase().includes(name.toLowerCase())));
+
+        // Берем первые 20 подходящих
+        filtered.slice(0, 20).forEach(game => {
             const title = game.title;
             const price = parseFloat(game.salePrice).toFixed(2);
             const normalPrice = parseFloat(game.normalPrice).toFixed(2);
@@ -99,6 +114,10 @@ async function loadGames() {
             `;
             container.appendChild(div);
         });
+
+        if(filtered.length === 0){
+            container.innerHTML = "❌ Популярні ігри зі знижкою не знайдені";
+        }
 
     } catch (e) {
         container.innerHTML = "❌ Помилка завантаження";
