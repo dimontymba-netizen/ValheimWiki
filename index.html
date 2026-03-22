@@ -45,20 +45,13 @@ img {
 <script>
 async function loadGames() {
     try {
-        // Получаем курс валют (RUB → UAH)
-        let rateRes = await fetch("https://api.exchangerate-api.com/v4/latest/RUB");
-        let rateData = await rateRes.json();
-        let rate = rateData.rates.UAH;
-
-        // Получаем игры со скидками
-        let res = await fetch("https://corsproxy.io/?https://store.steampowered.com/api/featuredcategories");
+        let res = await fetch("https://corsproxy.io/?https://store.steampowered.com/api/featuredcategories?cc=ua&l=uk");
         let data = await res.json();
 
         let html = "";
 
         data.specials.items.slice(0, 8).forEach(game => {
-            let priceRUB = game.final_price / 100;
-            let priceUAH = priceRUB * rate;
+            let priceUAH = game.final_price / 100;
 
             html += `
             <div class="game" onclick="openGame(${game.id})">
@@ -79,7 +72,7 @@ async function loadGames() {
 }
 
 function openGame(id) {
-    window.open(`https://store.steampowered.com/app/${id}`, "_blank");
+    window.open(`https://store.steampowered.com/app/${id}?cc=ua`, "_blank");
 }
 
 loadGames();
