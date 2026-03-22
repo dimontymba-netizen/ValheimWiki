@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="uk">
 <head>
 <meta charset="UTF-8">
-<title>🔥 Steam Скидки</title>
+<title>🔥 Знижки Steam</title>
 
 <style>
 body {
@@ -20,21 +20,27 @@ h1 {
     background: #1e293b;
     margin: 15px auto;
     padding: 15px;
-    border-radius: 10px;
-    width: 300px;
+    border-radius: 12px;
+    width: 320px;
+    cursor: pointer;
     transition: 0.3s;
 }
 
 .game:hover {
     transform: scale(1.05);
+    background: #334155;
+}
+
+img {
+    border-radius: 10px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🔥 Топ скидок Steam</h1>
-<div id="games">Загрузка...</div>
+<h1>🔥 Топ знижок Steam</h1>
+<div id="games">Завантаження...</div>
 
 <script>
 async function loadGames() {
@@ -45,12 +51,14 @@ async function loadGames() {
         let html = "";
 
         data.specials.items.slice(0, 8).forEach(game => {
+            let priceUAH = (game.final_price / 100) * 0.4;
+
             html += `
-            <div class="game">
+            <div class="game" onclick="openGame(${game.id})">
                 <h2>${game.name}</h2>
                 <img src="${game.header_image}" width="250"><br>
-                <p>Скидка: -${game.discount_percent}%</p>
-                <p>Цена: ${(game.final_price / 100).toFixed(2)} ₽</p>
+                <p>Знижка: -${game.discount_percent}%</p>
+                <p>Ціна: ${priceUAH.toFixed(2)} ₴</p>
             </div>
             `;
         });
@@ -58,9 +66,13 @@ async function loadGames() {
         document.getElementById("games").innerHTML = html;
 
     } catch (e) {
-        document.getElementById("games").innerHTML = "❌ Ошибка загрузки";
+        document.getElementById("games").innerHTML = "❌ Помилка завантаження";
         console.error(e);
     }
+}
+
+function openGame(id) {
+    window.open(`https://store.steampowered.com/app/${id}`, "_blank");
 }
 
 loadGames();
